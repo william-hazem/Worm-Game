@@ -1,15 +1,14 @@
 #include <SFML/Graphics.hpp>
+#include "Worm/Worm.hpp"
 #include <math.h>
 #include <vector>
+
+// Screen Constants
 int width = 640, height = 640;
 int res = 32;
 int gameSize = res*16;
-
-float vfator = 0.2;
-
-sf::Color headColor = sf::Color::Red;
-sf::Color bodyColor = sf::Color::White;
-sf::Color bodyColor2 = sf::Color::Cyan;
+// Velocity
+float vfator = 8.f;
 
 sf::Vertex quad[4];
 sf::RectangleShape border;
@@ -28,97 +27,6 @@ void draw_border(sf::RenderWindow& target)
     target.draw(border);
     // target.display();
 }
-
-class Worm{
-    float v[2] = {0, 0};
-    int size;
-    // sf::RectangleShape* body;
-    // sf::RectangleShape body[10];
-    std::vector<sf::RectangleShape> body;
-public:
-    Worm(int x, int y) : size(1) {
-        sf::Vector2f resolution((float) res, (float) res);
-        // body = new sf::RectangleShape();
-        sf::RectangleShape newBody;
-        newBody.setSize(resolution);
-        newBody.setPosition( (float) x, (float) y);
-        newBody.setFillColor(headColor);
-        newBody.setOrigin({(float) res/2, (float) res/2});
-        body.push_back(newBody);
-        
-    }
-
-    ~Worm() {
-        body.clear();
-    }
-
-    void grow() {
-        size++;
-        body.push_back(sf::RectangleShape());
-        // body = new sf::RectangleShape[size];
-        body[size-1].setSize({res, res});
-        sf::Vector2f pos = body[size-1].getPosition();
-        body[size-1].setPosition({pos.x - res*v[0], pos.y - res*v[1]});
-        if(size % 2 == 0) body[size-1].setFillColor(bodyColor);
-        else body[size-1].setFillColor(bodyColor2);
-        printf("LOG: Growed\n");
-        
-    }
-
-    void update() {
-        auto pos = body[0].getPosition();
-        float dx = pos.x + v[0]*res;
-        float dy = pos.y + v[1]*res;
-        if (dx >= gameSize) dx = 0;
-        if (dx < 0) dx = gameSize;
-        if (dy >= gameSize) dy = 0;
-        if (dy < 0) dy = gameSize;
-        
-        
-        int i = size-1;
-        // Moving body
-        while(i >= 0) {
-            pos = body[i-1].getPosition();
-            body[i].setPosition(pos);
-            i--;
-        
-        }
-        //Moving Head
-        body[0].setPosition(dx, dy);
-            
-        
-        
-    }
-
-    void draw(sf::RenderWindow &target){
-        int i = 0;
-        while(i < size) {
-            target.draw(body[i]);
-            i = i + 1;
-        }
-        
-    }
-
-    void up() {
-        v[0] = 0;
-        v[1] = -1 * vfator;
-    }
-
-    void down() {
-        v[0] = 0;
-        v[1] = 1 * vfator;
-    }
-
-    void left() {
-        v[0] = -1 * vfator;
-        v[1] = 0;
-    }
-
-    void right() {
-        v[0] = 1 * vfator;
-        v[1] = 0;
-    }
-};
 
 int main()
 {
@@ -146,7 +54,7 @@ int main()
         // x = rand() % gameSize;
         // y = rand() % gameSize;
         x = 0, y = 0;
-        worm = new Worm(x*res, y*res);
+        worm = new Worm(x*res, y*res, res);
     }
 
     
