@@ -31,7 +31,6 @@ Worm::~Worm() {
 
 void Worm::grow() {
     int i = body.size();
-    printf("%d\n", i);
     body.push_back(sf::RectangleShape());
     // body = new sf::RectangleShape[size];
     body[i].setSize({size, size});
@@ -91,4 +90,12 @@ void Worm::left() {
 void Worm::right() {
     v[0] = 1;
     v[1] = 0;
+}
+
+bool Worm::isBorder(float &xi, float &yi, float &xf, float &yf) {
+    // Worm head position
+    float x = bodyPos[0].x, y = bodyPos[0].y;
+    if(x < xi || x > xf || y < yi || y > yf)
+        return true;
+    return false;
 }

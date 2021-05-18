@@ -10,7 +10,7 @@ If you use **MinGW** to compiler your C++ code, you may install SFML in the proj
 this command in your terminal: 
 
 ```
-g++ main.cpp -I"include" -L"lib" -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -o Worm_Game.exe
+g++ src/* -I"include" -L"lib" -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -o Worm_Game.exe
 ```
 
 ![Luggage carrying worm](assets/screenshot.png)
