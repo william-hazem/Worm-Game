@@ -174,14 +174,19 @@ int main()
             strPontuation = "Pontuation: " + std::to_string(potuation);
         }
         if(worm->isCollided()) {
+            sf::RectangleShape p({640.f, 640.f});
+            p.setFillColor(sf::Color(0, 0, 0, 200));
+            
             printf("YOU LOSE!");
             bLose = true;
             str.clear();
-            str = "YOU LOSE";
+            sf::String string = "YOU LOSE\nPontuation: " + std::to_string(potuation);
+            text.setStyle(sf::Text::Bold);
+            text.setCharacterSize(32);
             text.setFillColor(sf::Color::Red);
             text.setPosition({gameSize/2, gameSize/2});
-            text.setString(str);
-
+            text.setString(string);
+            window.draw(p);
             window.draw(text);
             window.display();
             sf::sleep(sf::Time(sf::seconds(3)));
@@ -190,6 +195,7 @@ int main()
 
 
         str.clear();
+        str = "Last Key: ";
         str.insert(str.getSize(), char('A' + (int)okey));
         if(okey == key) {
             str.insert(str.getSize(), "");
