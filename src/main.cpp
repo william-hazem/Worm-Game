@@ -3,6 +3,8 @@
 #include "Worm/Util.h"
 #include <math.h>
 #include <vector>
+#include <string>
+
 
 // Screen Constants
 const int ZERO = 0;
@@ -50,15 +52,19 @@ class Fruit {
 
 public:
     Fruit(sf::Vector2f pos) {
-        size = {16.f, 16.f};
+        size = {24.f, 24.f};
         this->pos = pos;
     }
 
     void Draw(sf::RenderWindow& window) {
         sf::RectangleShape fruit(size);
-        fruit.setPosition(pos.x + 8, pos.y + 8);
+        fruit.setPosition(pos.x*res + 4, pos.y*res + 4);
         fruit.setFillColor(sf::Color::Green);
         window.draw(fruit);
+    }
+    
+    const sf::Vector2f& getPos() const{
+        return pos;
     }
 
 };
@@ -66,17 +72,25 @@ public:
 
 int main()
 {
-    
+    int potuation(0);
     Fruit *fruit;
-    
+    bool bLose = false;
+
+    sf::RectangleShape gameArea(sf::Vector2f(res*16, res*16));
+    gameArea.setFillColor(sf::Color::Transparent);
+    gameArea.setOutlineThickness(1.f);
+
+
+
     sf::Text text;
     sf::Font font;
+    sf::String str("Last key: "), strPontuation = "Pontuation: 0";
     // LOAD CUSTOM FONT FILE
-    if (!font.loadFromFile("CaviarDreams.ttf")) 
+    if (!font.loadFromFile("assets/texture/CaviarDreams.ttf")) 
     {
         printf("Erro!");
     }
-    
+
     char key, okey = '-';
     int keycount = 0U;
     sf::Vector2f playerPos = {0, 0};
@@ -90,22 +104,28 @@ int main()
     Worm *worm;
     {
         int x, y;
-        
+
         x = randNumber(tileNumber);
         y = randNumber(tileNumber);
         
-        fruit = new Fruit({(float) x * res, (float) y * res});
-        worm = new Worm(0, 0, res);
-        
+        fruit = new Fruit({(float) x, (float) y});
 
+        x = randNumber(tileNumber);
+        y = randNumber(tileNumber);
+
+        worm = new Worm(x, y, res);
+    
     }
-
+    worm->grow();
+    
+    worm->grow();
+    worm->update();
     
     window.setFramerateLimit(30);
     
+    
 
-
-    while (window.isOpen())
+    while (window.isOpen() && !bLose)
     {
         sf::Event event;
         while (window.pollEvent(event))
@@ -135,16 +155,41 @@ int main()
                     playerPos.y = (playerPos.y + res) >= gameSize ? playerPos.y : playerPos.y + res;
                     worm->down();
                 }
-                else if(event.key.code == sf::Keyboard::Space)
-                {
-                    worm->grow();
-                }
+                
                 key = event.key.code;
             }
             
                 
         }
-        sf::String str("Last key: ");
+
+        // Detecting if the Worm eat the Fruit
+        if(worm->isPos(fruit->getPos()))
+        {
+            worm->grow();
+            potuation++;
+            delete fruit;
+            int x = randNumber(tileNumber),
+                y = randNumber(tileNumber);
+            fruit = new Fruit({x, y});
+            strPontuation = "Pontuation: " + std::to_string(potuation);
+        }
+        if(worm->isCollided()) {
+            printf("YOU LOSE!");
+            bLose = true;
+            str.clear();
+            str = "YOU LOSE";
+            text.setFillColor(sf::Color::Red);
+            text.setPosition({gameSize/2, gameSize/2});
+            text.setString(str);
+
+            window.draw(text);
+            window.display();
+            sf::sleep(sf::Time(sf::seconds(3)));
+            break;
+        }
+
+
+        str.clear();
         str.insert(str.getSize(), char('A' + (int)okey));
         if(okey == key) {
             str.insert(str.getSize(), "");
@@ -152,35 +197,41 @@ int main()
         else keycount = 0;
         okey = key != ' ' ? key : okey;
         // printf("Key: %c\n", 'A' + key);
-        text.setString(str);
-        text.setPosition(0*16, res*16);
+
+
+        text.setPosition(8, res*16);
         text.setCharacterSize(24);
         text.setFillColor(sf::Color::White);
         text.setFont(font);
+
+        sf::String str2 = str + "\n" + strPontuation;
+        text.setString(str2);
+
+
         window.clear();
         // window.draw(border);
         draw_border(window);
         // Game area
-        sf::RectangleShape gameArea(sf::Vector2f(res*16, res*16));
-        gameArea.setFillColor(sf::Color::Transparent);
-        gameArea.setOutlineThickness(1.f);
-        window.draw(gameArea);
-
-        // Player
-        sf::RectangleShape player(sf::Vector2f(res, res));
-        player.setPosition(playerPos);
-        player.setFillColor(sf::Color::Green);
         
-        worm->update();
-
-        if(fruit != nullptr)
-            fruit->Draw(window);
-
-        worm->draw(window);
-        // window.draw(player);
+        
+        
+        
+        if(!bLose) {
+            if(fruit != nullptr)
+                fruit->Draw(window);
+        
+            window.draw(gameArea);
+            window.draw(text);
+        
+            worm->update();
+            worm->draw(window);
+        }
+        
        
-        window.draw(text);
+        
         window.display();
+        
+        sf::sleep(sf::milliseconds(90));
 
     }
 
