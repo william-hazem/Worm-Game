@@ -13,7 +13,7 @@ this command in your terminal:
 g++ src/* -I"include" -L"lib" -lsfml-graphics -lsfml-audio -lsfml-window -lsfml-system -o Worm_Game.exe
 ```
 
-![Luggage carrying worm](assets/screenshot.png)
+![Luggage carrying worm](assets/screenshot2.png)
 
 # Contact-me
 You're free to give me suggestions
