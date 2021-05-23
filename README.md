@@ -1,5 +1,7 @@
 # Worm-Game
-A simple C++ project
+A simple C++ project using SFML library.
+
+Spoiler: It's a snake(not worm XD) game 
 
 # Deps - Third Party
 This project depends of [SFML](https://www.sfml-dev.org/index.php)
